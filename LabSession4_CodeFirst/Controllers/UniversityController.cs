@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LabSession4_CodeFirst.Controllers
 {
@@ -22,6 +23,7 @@ namespace LabSession4_CodeFirst.Controllers
         }
 
         // GETTERS USING VIEWMODEL
+        [Authorize(Roles = "Teacher")]
         [HttpGet("students/{id}")]
         public async Task<ActionResult<StudentViewModel>> GetStudent(int id)
         {
@@ -37,7 +39,7 @@ namespace LabSession4_CodeFirst.Controllers
             var studentViewModel = _mapper.Map<StudentViewModel>(student);
             return studentViewModel;
         }
-
+        
         [HttpGet("teachers/{id}")]
         public async Task<ActionResult<TeacherViewModel>> GetTeacher(int id)
         {
@@ -52,6 +54,7 @@ namespace LabSession4_CodeFirst.Controllers
             return teacherViewModel;
         }
 
+        [Authorize(Roles = "Teacher")]
         [HttpGet("classes/{id}")]
         public async Task<ActionResult<ClassViewModel>> GetClass(int id)
         {
@@ -68,6 +71,7 @@ namespace LabSession4_CodeFirst.Controllers
             return classViewModel;
         }
 
+        [Authorize(Roles = "Teacher")]
         [HttpPost("students")]
         public async Task<ActionResult<StudentViewModel>> AddStudent([FromForm] Student student)
         {
@@ -76,7 +80,7 @@ namespace LabSession4_CodeFirst.Controllers
             var studentViewModel = _mapper.Map<StudentViewModel>(student);
             return CreatedAtAction(nameof(GetStudent), new { id = student.StudentId }, studentViewModel);
         }
-
+        
         [HttpPost("teachers")]
         public async Task<ActionResult<TeacherViewModel>> AddTeacher([FromForm] Teacher teacher)
         {
@@ -87,6 +91,7 @@ namespace LabSession4_CodeFirst.Controllers
             // returns a 201 created response with the uri of the new resource
         }
 
+        [Authorize(Roles = "Teacher")]
         [HttpPost("classes")]
         public async Task<ActionResult<ClassViewModel>> AddClass([FromForm] Class @class)
         {
@@ -96,6 +101,7 @@ namespace LabSession4_CodeFirst.Controllers
             return CreatedAtAction(nameof(GetClass), new { id = @class.ClassId }, classViewModel);
         }
 
+        [Authorize(Roles = "Teacher")]
         [HttpPost("classes/{classId}/enroll/{studentId}")]
         public async Task<ActionResult> EnrollInClass(int classId, int studentId)
         {
@@ -122,6 +128,7 @@ namespace LabSession4_CodeFirst.Controllers
             return Ok(new { student.StudentId, student.Name });
         }
 
+        [Authorize(Roles = "Teacher")]
         [HttpDelete("classes/{classId}/remove/{studentId}")]
         public async Task<ActionResult> RemoveFromClass(int classId, int studentId)
         {
